@@ -90,20 +90,33 @@ public class OrderRepository {
     }
 
     public void deletePartner(String partnerId){
-        // your code here
-        // delete partner by ID
+        // Delete partner by ID
         if(partnerMap.containsKey(partnerId)){
+            // Remove partner from partnerMap
             partnerMap.remove(partnerId);
+
+            // Unassign all orders assigned to this partner
+            for (Map.Entry<String, String> entry : orderToPartnerMap.entrySet()) {
+                if (entry.getValue().equals(partnerId)) {
+                    // Remove partner ID from orderToPartnerMap
+                    orderToPartnerMap.remove(entry.getKey());
+                }
+            }
+        }
+    }
+    public void deleteOrder(String orderId){
+        // Delete order by ID
+        if(orderMap.containsKey(orderId)){
+            // Remove order from orderMap
+            orderMap.remove(orderId);
+
+            if (orderToPartnerMap.containsKey(orderId)) {
+                // Remove order's ID from orderToPartnerMap
+                orderToPartnerMap.remove(orderId);
+            }
         }
     }
 
-    public void deleteOrder(String orderId){
-        // your code here
-        // delete order by ID
-        if(orderMap.containsKey(orderId)){
-            orderMap.remove(orderId);
-        }
-    }
 
     public Integer findCountOfUnassignedOrders(){
         // your code here
@@ -121,6 +134,9 @@ public class OrderRepository {
         int deliveryTime = countDeliveryTime(timeString);
         int ans = 0;
         HashSet<String> set = partnerToOrderMap.getOrDefault(partnerId,new HashSet<>());
+        if(set==null){
+            return 0;
+        }
         for(String orderId : set){
             Order order1 = orderMap.get(orderId);
             if(order1.getDeliveryTime()>deliveryTime){
@@ -135,6 +151,7 @@ public class OrderRepository {
         // code should return string in format HH:MM
         int lastDeliveryTime = Integer.MIN_VALUE;
         HashSet<String> set = partnerToOrderMap.getOrDefault(partnerId,new HashSet<>());
+        if(set == null) return null;
         for(String orderId:set){
             Order order = orderMap.get(orderId);
             lastDeliveryTime=Math.max(lastDeliveryTime,order.getDeliveryTime());
