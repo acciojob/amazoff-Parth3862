@@ -9,6 +9,8 @@ public class Order {
 
         // The deliveryTime has to converted from string to int and then stored in the attribute
         //deliveryTime  = HH*60 + MM
+        this.id=id;
+        this.deliveryTime=countDeliveryTime(deliveryTime);
     }
 
     public String getId() {
@@ -16,4 +18,11 @@ public class Order {
     }
 
     public int getDeliveryTime() {return deliveryTime;}
+
+    public int countDeliveryTime(String deliveryTime){
+        String strs[] = deliveryTime.split(":");
+        int hours = Integer.parseInt(strs[0]);
+        int minutes = Integer.parseInt(strs[1]);
+        return hours*60 + minutes;
+    }
 }
